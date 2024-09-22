@@ -1,27 +1,46 @@
-// src/products.js
+// src/data/products.js
 
 const products = [
-  { id: 1, name: 'Aretes de Diamante', price: 1299.99, category: 'Aretes' },
-  { id: 2, name: 'Pulsera de Oro', price: 2899.99, category: 'Pulseras' },
-  { id: 3, name: 'Anillo de Compromiso', price: 2499.99, category: 'Anillos' },
-  { id: 4, name: 'Lentes de Sol de Diseñador', price: 399.99, category: 'Lentes' },
-  { id: 5, name: 'Vincha de Seda', price: 149.99, category: 'Vinchas' },
-  { id: 6, name: 'Cinturón de Cuero Italiano', price: 299.99, category: 'Cinturones' },
-  { id: 7, name: 'Collar de Perlas', price: 799.99, category: 'Collares' },
-  { id: 8, name: 'Tobillera de Plata', price: 199.99, category: 'Tobilleras' },
-  { id: 9, name: 'Broche de Pelo de Cristal', price: 99.99, category: 'Broches para pelo' },
-  { id: 10, name: 'Diadema de Lujo', price: 249.99, category: 'Diademas' },
-  { id: 11, name: 'Bolso de Noche Elegante', price: 499.99, category: 'Bolsos pequeños/Neceseres' },
+  {
+    id: 1,
+    name: 'Aretes de Diamante',
+    price: 1599.99,
+    category: 'Aretes',
+    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+  },
+  {
+    id: 2,
+    name: 'Pulsera de Oro',
+    price: 899.99,
+    category: 'Pulseras',
+    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+  },
+  {
+    id: 3,
+    name: 'Anillo de Compromiso',
+    price: 2499.99,
+    category: 'Anillos',
+    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+  },
+  {
+    id: 4,
+    name: 'Lentes de Sol de Diseñador',
+    price: 399.99,
+    category: 'Lentes',
+    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+  },
+  {
+    id: 5,
+    name: 'Vincha de Seda',
+    price: 149.99,
+    category: 'Vinchas',
+    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+  },
+  // ... Agrega más productos si es necesario
 ];
 
-// Función para obtener el precio más bajo
-export const getMinPrice = () => {
-  return Math.min(...products.map(product => product.price));
-};
-
-// Función para obtener el precio más alto
-export const getMaxPrice = () => {
-  return Math.max(...products.map(product => product.price));
-};
+// Exportamos funciones para obtener precios mínimos y máximos dinámicos
+export const getMinPrice = () => Math.min(...products.map(product => product.price));
+export const getMaxPrice = () => Math.max(...products.map(product => product.price));
 
 export default products;

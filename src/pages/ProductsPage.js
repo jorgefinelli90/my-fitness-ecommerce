@@ -1,41 +1,58 @@
-// src/ProductsPage.js
+// src/pages/ProductsPage.js
 
-import React, { useState, useEffect } from 'react';
-import { Box, Grid, Card, CardContent, CardMedia, Typography, FormControl, InputLabel, Select, MenuItem, Slider } from '@mui/material';
-import products, { getMinPrice, getMaxPrice } from '../data/products';// Importamos las funciones del precio mínimo y máximo
+import React, { useState, useEffect, useContext } from 'react';
+import { Box, Grid, Card, CardContent, CardMedia, Typography, FormControl, InputLabel, Select, MenuItem, Slider, Button, IconButton, Modal } from '@mui/material';
+import { CartContext } from '../components/CartContext';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import products, { getMinPrice, getMaxPrice } from '../data/products';
 
 export default function ProductsPage() {
+  const { addToCart } = useContext(CartContext); // Contexto del carrito
   const [category, setCategory] = useState('');
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(5000);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalProduct, setModalProduct] = useState(null);
 
-  // Configuramos el rango de precios dinámicamente al cargar los productos
+  // Cargar precios mínimos y máximos
   useEffect(() => {
     const min = getMinPrice();
     const max = getMaxPrice();
     setMinPrice(min);
     setMaxPrice(max);
-    setPriceRange([min, max]); // Inicializamos el slider con estos valores
+    setPriceRange([min, max]);
   }, []);
 
-  // Función para manejar el cambio de categoría seleccionada
+  // Cambiar categoría seleccionada
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
 
-  // Función para manejar el cambio de rango de precio
+  // Cambiar rango de precios
   const handlePriceChange = (event, newValue) => {
     setPriceRange(newValue);
   };
 
-  // Filtramos los productos por categoría y rango de precio
+  // Mostrar productos filtrados
   const filteredProducts = products.filter(
     (product) =>
       (category === '' || product.category === category) &&
       product.price >= priceRange[0] &&
       product.price <= priceRange[1]
   );
+
+  // Abrir modal al agregar al carrito
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    setModalProduct(product);
+    setModalOpen(true);
+
+    // Cerrar automáticamente el modal después de 500 milisegundos
+    setTimeout(() => {
+      setModalOpen(false);
+    }, 1500);
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -82,8 +99,8 @@ export default function ProductsPage() {
               onChange={handlePriceChange}
               valueLabelDisplay="auto"
               aria-labelledby="price-range-slider"
-              min={minPrice} // Precio mínimo dinámico
-              max={maxPrice} // Precio máximo dinámico
+              min={minPrice}
+              max={maxPrice}
             />
           </Grid>
         </Grid>
@@ -97,7 +114,7 @@ export default function ProductsPage() {
               <CardMedia
                 component="img"
                 height="200"
-                image="/placeholder.svg"
+                image={product.image}
                 alt={product.name}
               />
               <CardContent>
@@ -110,11 +127,45 @@ export default function ProductsPage() {
                 <Typography variant="h6" color="text.primary">
                   ${product.price.toFixed(2)}
                 </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleAddToCart(product)}
+                  sx={{ mt: 2 }}
+                >
+                  Agregar al carrito
+                </Button>
+                <IconButton aria-label="add to wishlist" sx={{ ml: 1 }}>
+                  <FavoriteBorderIcon />
+                </IconButton>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
+
+      {/* Modal elegante */}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            width: 300,
+            textAlign: 'center',
+          }}
+        >
+          {modalProduct && (
+            <Typography variant="h6" gutterBottom>
+              {modalProduct.name} agregado al carrito
+            </Typography>
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 }

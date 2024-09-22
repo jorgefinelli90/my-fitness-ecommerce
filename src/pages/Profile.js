@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from './firebase';
+import { auth, db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {

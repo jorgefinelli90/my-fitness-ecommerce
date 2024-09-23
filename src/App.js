@@ -7,7 +7,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import InfoIcon from '@mui/icons-material/Info';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -20,6 +19,7 @@ import Profile from './pages/Profile';
 import Cart from './pages/Cart';
 import SlideInCart from './components/SlideInCart';
 import Footer from './components/Footer';
+import ProductDetail from './pages/ProductDetail'; // Add this import
 
 const theme = createTheme({
   palette: {
@@ -138,22 +138,19 @@ export default function App() {
         <CssBaseline />
         <Router>
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            {/* AppBar fixed with z-index and background white */}
             <AppBar
               position="sticky"
               color="transparent"
               elevation={0}
               sx={{
-                zIndex: 1000, // Ensures it stays above other content
-                backgroundColor: 'white', // White background to avoid text overlap
+                zIndex: 1000,
+                backgroundColor: 'white',
               }}
             >
               <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {isMobile ? (
                   <>
-                    {/* Carrito a la izquierda en mobile */}
                     <CartButton onClick={handleCartToggle} />
-                    {/* Nombre de la marca centrado */}
                     <Typography
                       variant="h6"
                       component={Link}
@@ -162,7 +159,6 @@ export default function App() {
                     >
                       Lux-acc
                     </Typography>
-                    {/* Menú a la derecha */}
                     <IconButton
                       color="inherit"
                       aria-label="open drawer"
@@ -226,6 +222,7 @@ export default function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
                 </Routes>
               </Box>
             </Container>

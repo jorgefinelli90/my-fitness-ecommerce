@@ -1,44 +1,64 @@
 // src/data/products.js
+// Importa las imágenes
+import anillo from '../assets/images/img-product/anillo.jpg';
+import anteojos from '../assets/images/img-product/anteojos.jpg';
+import aros from '../assets/images/img-product/aros.jpg';
+import aros1 from '../assets/images/img-product/aros1.jpg';
+import brazalete from '../assets/images/img-product/brazalete.jpg';
+import cartera from '../assets/images/img-product/cartera.jpg';
+import pulsera from '../assets/images/img-product/pulsera.jpg';
 
 const products = [
   {
     id: 1,
-    name: 'Aretes de Diamante',
+    name: 'Anillo de Diamante',
     price: 1599.99,
-    category: 'Aretes',
-    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+    category: 'Anillos',
+    image: anillo, // Usa la imagen importada
   },
   {
     id: 2,
-    name: 'Pulsera de Oro',
-    price: 899.99,
-    category: 'Pulseras',
-    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+    name: 'Anteojos de Sol',
+    price: 799.99,
+    category: 'Lentes',
+    image: anteojos,
   },
   {
     id: 3,
-    name: 'Anillo de Compromiso',
-    price: 2499.99,
-    category: 'Anillos',
-    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+    name: 'Aros de Plata',
+    price: 299.99,
+    category: 'Aretes',
+    image: aros,
   },
   {
     id: 4,
-    name: 'Lentes de Sol de Diseñador',
-    price: 399.99,
-    category: 'Lentes',
-    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+    name: 'Aros Modernos',
+    price: 349.99,
+    category: 'Aretes',
+    image: aros1,
   },
   {
     id: 5,
-    name: 'Vincha de Seda',
-    price: 149.99,
-    category: 'Vinchas',
-    image: 'https://img.freepik.com/fotos-premium/joyas-diamantes-joya-cristal-joya-piedra-brillante-lujo-aislado-blanco-gema-preciosa_851808-477.jpg'
+    name: 'Brazalete Dorado',
+    price: 699.99,
+    category: 'Pulseras',
+    image: brazalete,
   },
-  // ... Agrega más productos si es necesario
+  {
+    id: 6,
+    name: 'Cartera de Cuero',
+    price: 1199.99,
+    category: 'Bolsos pequeños/Neceseres',
+    image: cartera,
+  },
+  {
+    id: 7,
+    name: 'Pulsera de Perlas',
+    price: 499.99,
+    category: 'Pulseras',
+    image: pulsera,
+  }
 ];
-
 // Exportamos funciones para obtener precios mínimos y máximos dinámicos
 export const getMinPrice = () => Math.min(...products.map(product => product.price));
 export const getMaxPrice = () => Math.max(...products.map(product => product.price));

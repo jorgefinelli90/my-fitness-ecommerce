@@ -4,6 +4,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { updateProfile } from 'firebase/auth'; // Importamos updateProfile para actualizar Firebase Authentication
 
 const Profile = () => {
   const [userData, setUserData] = useState({
@@ -70,6 +71,9 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
+      let updatedUserData = { ...userData };
+
+      // Si se selecciona una imagen, se sube al storage y se actualiza photoURL
       if (selectedImage) {
         const imageRef = ref(storage, `profile-images/${user.uid}`);
         const uploadTask = uploadBytesResumable(imageRef, selectedImage);
@@ -85,13 +89,29 @@ const Profile = () => {
           },
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            await setDoc(doc(db, "users", user.uid), { ...userData, photoURL: downloadURL });
+            updatedUserData.photoURL = downloadURL;
+            await setDoc(doc(db, "users", user.uid), updatedUserData);
+            setUserData((prevState) => ({ ...prevState, photoURL: downloadURL }));
+
+            // Actualizar también el perfil en Firebase Authentication
+            await updateProfile(auth.currentUser, {
+              displayName: `${userData.firstName} ${userData.lastName}`,
+              photoURL: downloadURL
+            });
+
             alert("Datos guardados exitosamente");
           }
         );
       } else {
         // Guardar los datos sin actualizar la imagen
-        await setDoc(doc(db, "users", user.uid), userData);
+        await setDoc(doc(db, "users", user.uid), updatedUserData);
+
+        // Actualizar también el perfil en Firebase Authentication
+        await updateProfile(auth.currentUser, {
+          displayName: `${userData.firstName} ${userData.lastName}`,
+          photoURL: userData.photoURL // Mantener la foto si no se cambió
+        });
+
         alert("Datos guardados exitosamente");
       }
     } catch (err) {
@@ -101,11 +121,24 @@ const Profile = () => {
 
   return (
     <Box>
-      <Typography variant="h5">Perfil de Usuario</Typography>
       {loading ? (
         <Typography>Cargando datos...</Typography>
       ) : (
         <Box>
+          {userData.photoURL && (
+            <Box>
+              <img
+                src={userData.photoURL}
+                alt="Foto de perfil"
+                style={{ width: 150, height: 150, borderRadius: '50%', objectFit: 'cover' }}
+              />
+            </Box>
+          )}
+          {userData.firstName && (
+            <Box>
+              <Typography variant="h5" >Hola, {userData.firstName}. Este es tu perfil de usuario.</Typography>
+            </Box>
+          )}
           <TextField
             label="Nombre"
             name="firstName"

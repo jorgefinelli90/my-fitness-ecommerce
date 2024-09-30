@@ -1,224 +1,192 @@
 import React from 'react';
-import { Box, Typography, Button, useMediaQuery, useTheme, Container } from '@mui/material';
-import { Link } from 'react-router-dom';
+import {
+    Box,
+    Typography,
+    Button,
+    Container,
+    Grid,
+    Card,
+    CardContent,
+    CardMedia,
+    useMediaQuery
+} from '@mui/material';
+import { styled } from '@mui/system';
 import { motion } from 'framer-motion';
-import DiamondIcon from '@mui/icons-material/Diamond';
+import { Link } from 'react-router-dom';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import products from '../data/products';
 
-// Importar las imágenes
+// Import images
 import bannerDesktop from '../assets/images/img-product/banner-desktop.jpg';
 import bannerMobile from '../assets/images/img-product/banner-mobile.jpg';
-import arosImage from '../assets/images/img-product/aros.jpg';
-import carteraImage from '../assets/images/img-product/cartera.jpg';
-import relojImage from '../assets/images/img-product/reloj.jpg';
+
+// Styled components
+const HeroBanner = styled(Box)(({ theme }) => ({
+    height: '100vh',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white',
+    position: 'relative',
+    '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+}));
+
+const NavButton = styled(Button)(({ theme }) => ({
+    color: 'white',
+    margin: theme.spacing(0, 1),
+    '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
+}));
+
+const ProductCard = styled(Card)(({ theme }) => ({
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+    '&:hover': {
+        transform: 'translateY(-5px)',
+        boxShadow: theme.shadows[4],
+    },
+}));
 
 export default function LandingPage() {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
     return (
-        <Box sx={{ width: '100%', overflowX: 'hidden' }}>
-            {/* Banner con efecto de brillo */}
-            <Box
-                sx={{
-                    position: 'relative',
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundImage: `url(${isMobile ? bannerMobile : bannerDesktop})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 0,
-                    margin: 0,
-                    left: '50%',
-                    right: '50%',
-                    marginLeft: '-50vw',
-                    marginRight: '-50vw',
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'linear-gradient(45deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%)',
-                        animation: 'shine 1.5s infinite',
-                        '@keyframes shine': {
-                            '0%': { transform: 'translateX(-100%)' },
-                            '100%': { transform: 'translateX(100%)' },
-                        },
-                    },
-                }}
-            >
-                {/* Contenido del banner */}
-                <Box
-                    sx={{
-                        position: 'relative',
-                        zIndex: 1,
-                        p: 4,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        width: { xs: '90%', md: '70%' },
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                    }}
-                >
+        <Box>
+            <HeroBanner sx={{ backgroundImage: `url(${isMobile ? bannerMobile : bannerDesktop})` }}>
+                <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, p: 2 }}>
                     <motion.div
-                        initial={{ opacity: 0, y: 50 }}
+                        initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
+                        transition={{ duration: 0.5 }}
                     >
-                        <Typography variant="h1" component="h1" gutterBottom sx={{ color: 'white' }}>
-                            Lux-acc
-                        </Typography>
+                        <NavButton component={Link} to="/">Inicio</NavButton>
+                        <NavButton component={Link} to="/productos">Tienda</NavButton>
+                        <NavButton component={Link} to="/categorias">Categorías</NavButton>
+                        <NavButton component={Link} to="/contacto">Contacto</NavButton>
                     </motion.div>
-
+                </Box>
+                <Box sx={{ position: 'relative', textAlign: 'center', zIndex: 1 }}>
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                     >
-                        <Typography variant="h4" component="h2" gutterBottom sx={{ color: 'white' }}>
-                            Accesorios de lujo para elevar tu estilo
+                        <Typography variant="h1" component="h1" gutterBottom>
+                            The Luxury Shop
                         </Typography>
+                        <Typography variant="h4" gutterBottom>
+                            Descubre la elegancia en cada detalle
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            startIcon={<ShoppingBagIcon />}
+                            component={Link}
+                            to="/productos"
+                            sx={{
+                                mt: 2,
+                                backgroundColor: 'white',
+                                color: 'black',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                },
+                            }}
+                        >
+                            Explorar Colección
+                        </Button>
                     </motion.div>
                 </Box>
-            </Box>
+            </HeroBanner>
 
-            <Container maxWidth="lg">
-                <Box sx={{ py: 8 }}>
-                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'center', gap: 2, mt: 6 }}>
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button
-                                variant="contained"
-                                size="large"
-                                startIcon={<DiamondIcon />}
-                                component={Link}
-                                to="/productos"
-                                fullWidth
+            <Container maxWidth="lg" sx={{ my: 8 }}>
+                <Typography variant="h2" component="h2" gutterBottom align="center" sx={{ mb: 6 }}>
+                    Productos Destacados
+                </Typography>
+                <Grid container spacing={4}>
+                    {products.slice(0, 4).map((product, index) => (
+                        <Grid item key={product.id} xs={12} sm={6} md={3}>
+                            <motion.div
+                                style={{ height: 500 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
                             >
-                                Explorar Colección
-                            </Button>
-                        </motion.div>
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button
-                                variant="outlined"
-                                size="large"
-                                component={Link}
-                                to="/regaleria"
-                                fullWidth
-                            >
-                                Servicio de Regalería
-                            </Button>
-                        </motion.div>
-                    </Box>
-
-                    <Box sx={{ mt: 12 }}>
-                        <motion.div
-                            initial={{ opacity: 0, y: 50 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1, duration: 0.8 }}
-                        >
-                            <Typography variant="h2" gutterBottom>
-                                Productos Destacados
-                            </Typography>
-                        </motion.div>
-                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'center', gap: 4, mt: 4 }}>
-                            {[
-                                { name: 'Aretes de Diamante', price: '$1,299.99', image: arosImage },
-                                { name: 'Bolso de Noche', price: '$499.99', image: carteraImage },
-                                { name: 'Reloj de Lujo', price: '$2,999.99', image: relojImage }
-                            ].map((product, index) => (
-                                <motion.div
-                                    key={product.name}
-                                    initial={{ opacity: 0, y: 50 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 1.2 + index * 0.2, duration: 0.8 }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: { xs: '100%', md: 250 },
-                                            height: 300,
-                                            backgroundColor: 'background.paper',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            borderRadius: 2,
-                                            boxShadow: 3,
-                                            p: 2,
-                                            overflow: 'hidden',
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: '100%',
-                                                height: 200,
-                                                backgroundImage: `url(${product.image})`,
-                                                backgroundSize: 'cover',
-                                                backgroundPosition: 'center',
-                                                mb: 2,
-                                            }}
-                                        />
-                                        <Typography variant="h6" gutterBottom>{product.name}</Typography>
-                                        <Typography variant="body1" color="text.secondary" gutterBottom>
-                                            {product.price}
+                                <ProductCard>
+                                    <CardMedia
+                                        component="img"
+                                        height="350"
+                                        image={product.image}
+                                        alt={product.name}
+                                    />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h6" component="div">
+                                            {product.name}
                                         </Typography>
-                                        <Button variant="outlined" size="small">Ver Detalles</Button>
-                                    </Box>
-                                </motion.div>
-                            ))}
-                        </Box>
-                    </Box>
-
-                    <Box sx={{ mt: 12 }}>
-                        <motion.div
-                            initial={{ opacity: 0, y: 50 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1.8, duration: 0.8 }}
-                        >
-                            <Typography variant="h2" gutterBottom>
-                                Por qué elegir Lux-acc
-                            </Typography>
-                        </motion.div>
-                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'center', gap: 4, mt: 4 }}>
-                            {[
-                                { title: 'Calidad Premium', description: 'Materiales de la más alta calidad y artesanía excepcional' },
-                                { title: 'Diseño Exclusivo', description: 'Piezas únicas que reflejan tu estilo personal' },
-                                { title: 'Servicio de Regalería', description: 'Empaques elegantes y opciones de personalización' }
-                            ].map((feature, index) => (
-                                <motion.div
-                                    key={feature.title}
-                                    initial={{ opacity: 0, y: 50 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 2 + index * 0.2, duration: 0.8 }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: { xs: '100%', md: 250 },
-                                            height: 200,
-                                            backgroundColor: 'background.paper',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            borderRadius: 2,
-                                            boxShadow: 3,
-                                            p: 2,
-                                        }}
-                                    >
-                                        <Typography variant="h6" gutterBottom>{feature.title}</Typography>
-                                        <Typography variant="body2" color="text.secondary" align="center">
-                                            {feature.description}
+                                        <Typography variant="body2" color="text.secondary">
+                                            {product.shortDescription}
                                         </Typography>
-                                    </Box>
-                                </motion.div>
-                            ))}
-                        </Box>
-                    </Box>
-                </Box>
+                                        <Typography variant="h6" color="text.primary" sx={{ mt: 2 }}>
+                                            ${product.price.toFixed(2)}
+                                        </Typography>
+                                        <Button
+                                            variant="outlined"
+                                            fullWidth
+                                            sx={{ mt: 2 }}
+                                            component={Link}
+                                            to={`/product/${product.id}`}
+                                        >
+                                            Ver Detalles
+                                        </Button>
+                                    </CardContent>
+                                </ProductCard>
+                            </motion.div>
+                        </Grid>
+                    ))}
+                </Grid>
             </Container>
+
+            <Box sx={{ bgcolor: 'background.paper', py: 8 }}>
+                <Container maxWidth="md">
+                    <Typography variant="h3" component="h2" gutterBottom align="center">
+                        Por qué elegirnos
+                    </Typography>
+                    <Grid container spacing={4} sx={{ mt: 4 }}>
+                        {[
+                            { title: 'Calidad Premium', description: 'Productos de la más alta calidad y artesanía excepcional' },
+                            { title: 'Diseño Exclusivo', description: 'Piezas únicas que reflejan tu estilo personal' },
+                            { title: 'Servicio Personalizado', description: 'Atención al cliente dedicada y asesoramiento experto' }
+                        ].map((feature, index) => (
+                            <Grid item key={feature.title} xs={12} md={4}>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                                >
+                                    <Typography variant="h5" component="h3" gutterBottom>
+                                        {feature.title}
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        {feature.description}
+                                    </Typography>
+                                </motion.div>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Container>
+            </Box>
         </Box>
     );
-}
+} 

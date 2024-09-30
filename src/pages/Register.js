@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'; // Importamos updateProfile
 import { auth } from '../firebase';
 
 const Register = () => {
@@ -19,9 +19,23 @@ const Register = () => {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert('Usuario registrado con éxito');
-      // Aquí puedes añadir lógica para manejar el nombre, apellido y suscripción al newsletter
+      // Crear el usuario con email y contraseña
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Actualizar el perfil del usuario con el nombre completo (nombre + apellido)
+      await updateProfile(user, {
+        displayName: `${nombre} ${apellido}`,
+      });
+
+      alert('Usuario registrado con éxito y perfil actualizado');
+
+      // Aquí puedes añadir lógica para manejar la suscripción al newsletter
+      if (subscribeNewsletter) {
+        // Lógica para la suscripción al newsletter
+        console.log('Suscripción al newsletter activada');
+      }
+
     } catch (err) {
       setError(err.message);
     }

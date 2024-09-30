@@ -92,10 +92,6 @@ export default function App() {
       <Typography variant="h6" sx={{ my: 2 }}>Lux-acc</Typography>
       <List>
         {[
-          { text: 'Productos', to: '/productos', icon: <ShoppingCartIcon /> },
-          { text: 'Carrito', to: '#', icon: <ShoppingCartIcon />, action: handleCartToggle },
-          { text: 'Regalería', to: '/regaleria', icon: <CardGiftcardIcon /> },
-          // Mostrar opción de "Profile" si el usuario está logueado
           user && {
             text: `Hola, ${user.displayName || 'Usuario'}`,
             to: '/profile',
@@ -105,7 +101,9 @@ export default function App() {
               <AccountCircleIcon />
             )
           },
-          // Mostrar "Cerrar sesión" si el usuario está logueado, de lo contrario, mostrar "Login" y "Register"
+          { text: 'Productos', to: '/productos', icon: <ShoppingCartIcon /> },
+          { text: 'Carrito', to: '#', icon: <ShoppingCartIcon />, action: handleCartToggle },
+          { text: 'Regalería', to: '/regaleria', icon: <CardGiftcardIcon /> },
           user
             ? { text: 'Cerrar sesión', to: '#', icon: <LogoutIcon />, action: handleLogout }
             : { text: 'Login', to: '/login', icon: <LoginIcon /> },
@@ -113,17 +111,20 @@ export default function App() {
         ].filter(item => item).map((item) => (
           <ListItem
             key={item.text}
-            component={item.to !== '#' ? Link : 'div'}
+            component={item.to !== '#' ? Link : 'div'} // Asegurarnos de usar "div" cuando sea un botón de acción
             to={item.to}
             onClick={item.action ? item.action : handleDrawerToggle}
           >
-            {item.icon && <IconButton>{item.icon}</IconButton>}
+            <IconButton>
+              {item.icon} {/* El icono se coloca aquí */}
+            </IconButton>
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
       </List>
     </Box>
   );
+;
 
 
   return (
@@ -183,17 +184,19 @@ export default function App() {
                       <>
                         {/* Mostrar nombre del usuario y su imagen de perfil */}
                         <Typography variant="body1" sx={{ mr: 2 }}>Hola, {user.displayName || 'Usuario'}</Typography>
-                        {user.photoURL ? (
-                          <Avatar
-                            alt={user.displayName}
-                            src={user.photoURL}
-                            sx={{ width: 40, height: 40 }}
-                          />
-                        ) : (
-                          <IconButton color="inherit" component={Link} to="/profile">
-                            <AccountCircleIcon />
-                          </IconButton>
-                        )}
+                        <Link to="/profile" style={{ textDecoration: 'none' }}>
+                          {user.photoURL ? (
+                            <Avatar
+                              alt={user.displayName}
+                              src={user.photoURL}
+                              sx={{ width: 40, height: 40, cursor: 'pointer' }}
+                            />
+                          ) : (
+                            <IconButton color="inherit" component={Link} to="/profile">
+                              <AccountCircleIcon />
+                            </IconButton>
+                          )}
+                        </Link>
                         <IconButton color="inherit" onClick={handleLogout}>
                           <LogoutIcon />
                         </IconButton>

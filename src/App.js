@@ -1,15 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, IconButton, Container, Box, Drawer, List, ListItem, ListItemText, Badge } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Container, Box, Drawer, List, ListItem, ListItemText, Badge, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider, CssBaseline, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LogoutIcon from '@mui/icons-material/Logout';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import { motion, AnimatePresence } from 'framer-motion';
-
 import { CartProvider, CartContext } from './components/CartContext';
 import LandingPage from './pages/LandingPage';
 import ProductsPage from './pages/ProductsPage';
@@ -19,7 +19,9 @@ import Profile from './pages/Profile';
 import Cart from './pages/Cart';
 import SlideInCart from './components/SlideInCart';
 import Footer from './components/Footer';
-import ProductDetail from './pages/ProductDetail'; // Add this import
+import ProductDetail from './pages/ProductDetail';
+import { signOut, onAuthStateChanged } from 'firebase/auth'; // Firebase imports
+import { auth } from './firebase'; // Asegúrate de tener tu configuración Firebase
 
 const theme = createTheme({
   palette: {
@@ -42,30 +44,6 @@ const theme = createTheme({
   typography: {
     fontFamily: '"Montserrat", sans-serif',
   },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          transition: 'all 0.3s ease-in-out',
-          '&:hover': {
-            transform: 'translateY(-2px)',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-          },
-        },
-      },
-    },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          transition: 'all 0.3s ease-in-out',
-          '&:hover': {
-            transform: 'scale(1.1)',
-          },
-        },
-      },
-    },
-  },
 });
 
 function CartButton({ onClick }) {
@@ -86,6 +64,8 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [user, setUser] = useState(null); // Estado para almacenar el usuario
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -94,18 +74,17 @@ export default function App() {
     setIsCartOpen(!isCartOpen);
   };
 
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
+  // Obtenemos el usuario autenticado de Firebase
   useEffect(() => {
-    const handleEscKey = (event) => {
-      if (event.key === 'Escape') {
-        setIsCartOpen(false);
-      }
-    };
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
 
-    window.addEventListener('keydown', handleEscKey);
-
-    return () => {
-      window.removeEventListener('keydown', handleEscKey);
-    };
+    return () => unsubscribe();
   }, []);
 
   const drawer = (
@@ -116,21 +95,36 @@ export default function App() {
           { text: 'Productos', to: '/productos', icon: <ShoppingCartIcon /> },
           { text: 'Carrito', to: '#', icon: <ShoppingCartIcon />, action: handleCartToggle },
           { text: 'Regalería', to: '/regaleria', icon: <CardGiftcardIcon /> },
-          { text: 'Login', to: '/login', icon: <LoginIcon /> },
-          { text: 'Register', to: '/register', icon: <PersonAddIcon /> },
-        ].map((item) => (
+          // Mostrar opción de "Profile" si el usuario está logueado
+          user && {
+            text: `Hola, ${user.displayName || 'Usuario'}`,
+            to: '/profile',
+            icon: user.photoURL ? (
+              <Avatar alt={user.displayName} src={user.photoURL} sx={{ width: 24, height: 24 }} />
+            ) : (
+              <AccountCircleIcon />
+            )
+          },
+          // Mostrar "Cerrar sesión" si el usuario está logueado, de lo contrario, mostrar "Login" y "Register"
+          user
+            ? { text: 'Cerrar sesión', to: '#', icon: <LogoutIcon />, action: handleLogout }
+            : { text: 'Login', to: '/login', icon: <LoginIcon /> },
+          !user && { text: 'Register', to: '/register', icon: <PersonAddIcon /> },
+        ].filter(item => item).map((item) => (
           <ListItem
             key={item.text}
             component={item.to !== '#' ? Link : 'div'}
             to={item.to}
             onClick={item.action ? item.action : handleDrawerToggle}
           >
+            {item.icon && <IconButton>{item.icon}</IconButton>}
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
       </List>
     </Box>
   );
+
 
   return (
     <CartProvider>
@@ -184,15 +178,36 @@ export default function App() {
                     >
                       Lux-acc
                     </Typography>
-                    <IconButton color="inherit" component={Link} to="/profile">
-                      <AccountCircleIcon />
-                    </IconButton>
-                    <IconButton color="inherit" component={Link} to="/login">
-                      <LoginIcon />
-                    </IconButton>
-                    <IconButton color="inherit" component={Link} to="/register">
-                      <PersonAddIcon />
-                    </IconButton>
+
+                    {user ? (
+                      <>
+                        {/* Mostrar nombre del usuario y su imagen de perfil */}
+                        <Typography variant="body1" sx={{ mr: 2 }}>Hola, {user.displayName || 'Usuario'}</Typography>
+                        {user.photoURL ? (
+                          <Avatar
+                            alt={user.displayName}
+                            src={user.photoURL}
+                            sx={{ width: 40, height: 40 }}
+                          />
+                        ) : (
+                          <IconButton color="inherit" component={Link} to="/profile">
+                            <AccountCircleIcon />
+                          </IconButton>
+                        )}
+                        <IconButton color="inherit" onClick={handleLogout}>
+                          <LogoutIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <>
+                        <IconButton color="inherit" component={Link} to="/login">
+                          <LoginIcon />
+                        </IconButton>
+                        <IconButton color="inherit" component={Link} to="/register">
+                          <PersonAddIcon />
+                        </IconButton>
+                      </>
+                    )}
                   </motion.div>
                 )}
               </Toolbar>

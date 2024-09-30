@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, Checkbox, FormControlLabel,  } from '@mui/material';
+import { TextField, Button, Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
@@ -13,17 +13,18 @@ const Profile = () => {
     phone: '',
     email: '',
     newsletter: false,
-    photoURL: '' // Agrega un campo para la foto de perfil
+    photoURL: '' // Campo para la foto de perfil
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const navigate = useNavigate();
-  
+
   const user = auth.currentUser;
   const storage = getStorage();
 
+  // Obtener los datos del usuario de Firestore
   useEffect(() => {
     if (user) {
       const getUserData = async () => {
@@ -32,6 +33,17 @@ const Profile = () => {
 
         if (docSnap.exists()) {
           setUserData(docSnap.data());
+        } else {
+          // Si no existe el documento, dejamos los campos vacíos
+          setUserData({
+            firstName: '',
+            lastName: '',
+            address: '',
+            phone: '',
+            email: user.email, // Rellenamos el email con el correo autenticado
+            newsletter: false,
+            photoURL: ''
+          });
         }
         setLoading(false);
       };
@@ -58,7 +70,6 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
-      // Upload the image to Firebase Storage
       if (selectedImage) {
         const imageRef = ref(storage, `profile-images/${user.uid}`);
         const uploadTask = uploadBytesResumable(imageRef, selectedImage);
@@ -72,17 +83,14 @@ const Profile = () => {
           (error) => {
             setError(error.message);
           },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              setUserData({ ...userData, photoURL: downloadURL });
-              // Save the updated user data to Firestore
-              setDoc(doc(db, "users", user.uid), userData);
-              alert("Datos guardados exitosamente");
-            });
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            await setDoc(doc(db, "users", user.uid), { ...userData, photoURL: downloadURL });
+            alert("Datos guardados exitosamente");
           }
         );
       } else {
-        // Save the user data without updating the profile picture
+        // Guardar los datos sin actualizar la imagen
         await setDoc(doc(db, "users", user.uid), userData);
         alert("Datos guardados exitosamente");
       }
@@ -148,6 +156,10 @@ const Profile = () => {
             }
             label="¿Desea suscribirse al newsletter?"
           />
+          <input type="file" onChange={handleImageChange} />
+          {uploadProgress > 0 && (
+            <Typography>Progreso de subida: {uploadProgress}%</Typography>
+          )}
           {error && <Typography color="error">{error}</Typography>}
           <Button variant="contained" color="primary" onClick={handleSave}>
             Guardar

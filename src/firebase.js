@@ -1,9 +1,10 @@
-// Import the functions you need from the SDKs you need
+// Importar las funciones necesarias de Firebase
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, initializeFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
-// Your web app's Firebase configuration
+// Configuración de Firebase para tu proyecto
 const firebaseConfig = {
   apiKey: "AIzaSyDt79us3Fk3UKh2Oxg3Uls4cRE3cNqexQw",
   authDomain: "accfit-4d42e.firebaseapp.com",
@@ -14,14 +15,10 @@ const firebaseConfig = {
   measurementId: "G-JFF96V0FV7"
 };
 
-// Initialize Firebase
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
-// Initialize Firebase Authentication and Firestore
-export const auth = getAuth(app);
-
-// Forzar la conexión directa a Firestore sin persistencia offline
-export const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true, // Esto fuerza a Firestore a evitar la caché y hacer solicitudes directas
-  useFetchStreams: false
-});
+// Inicializar Authentication y Firestore
+export const auth = getAuth(app); // Inicializa Firebase Authentication
+export const db = getFirestore(app); // Inicializa Firestore

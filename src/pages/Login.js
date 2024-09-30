@@ -13,7 +13,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/'); // Redirige a la landing page
+      navigate('/profile'); // Redirige al perfil si el login es exitoso
     } catch (err) {
       setError(err.message);
     }

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'; // Importamos updateProfile
-import { auth } from '../firebase';
+import { TextField, Button, Box, Typography, Checkbox, FormControlLabel, Snackbar } from '@mui/material';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth, db } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [nombre, setNombre] = useState('');
@@ -11,6 +13,8 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
   const [error, setError] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Estado para el Snackbar
+  const navigate = useNavigate(); // Hook para la redirección
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
@@ -28,13 +32,23 @@ const Register = () => {
         displayName: `${nombre} ${apellido}`,
       });
 
-      alert('Usuario registrado con éxito y perfil actualizado');
+      // Guardar datos adicionales en Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        firstName: nombre,
+        lastName: apellido,
+        email: email,
+        phone: '',
+        address: '',
+        newsletter: subscribeNewsletter,
+        photoURL: ''
+      });
 
-      // Aquí puedes añadir lógica para manejar la suscripción al newsletter
-      if (subscribeNewsletter) {
-        // Lógica para la suscripción al newsletter
-        console.log('Suscripción al newsletter activada');
-      }
+      // Mostrar el snackbar durante 700 ms y luego redirigir al inicio
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        setSnackbarOpen(false);
+        navigate('/'); // Redirige al inicio
+      }, 700);
 
     } catch (err) {
       setError(err.message);
@@ -105,6 +119,15 @@ const Register = () => {
       <Button variant="contained" color="primary" onClick={handleRegister} sx={{ mt: 2 }}>
         Registrarse
       </Button>
+
+      {/* Snackbar para la notificación */}
+      <Snackbar
+        open={snackbarOpen}
+        message="Usuario registrado con éxito"
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        autoHideDuration={700}
+        onClose={() => setSnackbarOpen(false)} // Cerrar el snackbar automáticamente
+      />
     </Box>
   );
 };

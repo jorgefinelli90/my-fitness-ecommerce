@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, IconButton, Container, Box, Drawer, List, ListItem, ListItemText, Badge, Avatar } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Container, Box, Drawer, List, ListItem, ListItemText, Badge, Avatar, Divider } from '@mui/material';
 import { createTheme, ThemeProvider, CssBaseline, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
@@ -22,6 +23,7 @@ import Footer from './components/Footer';
 import ProductDetail from './pages/ProductDetail';
 import { signOut, onAuthStateChanged } from 'firebase/auth'; // Firebase imports
 import { auth } from './firebase'; // Asegúrate de tener tu configuración Firebase
+import ScrollToTop from './components/ScrollToTop'; // Importamos ScrollToTop
 
 const theme = createTheme({
   palette: {
@@ -88,50 +90,74 @@ export default function App() {
   }, []);
 
   const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>Lux-acc</Typography>
-      <List>
-        {[
-          user && {
-            text: `Hola, ${user.displayName || 'Usuario'}`,
-            to: '/profile',
-            icon: user.photoURL ? (
-              <Avatar alt={user.displayName} src={user.photoURL} sx={{ width: 24, height: 24 }} />
-            ) : (
-              <AccountCircleIcon />
-            )
-          },
-          { text: 'Productos', to: '/productos', icon: <ShoppingCartIcon /> },
-          { text: 'Carrito', to: '#', icon: <ShoppingCartIcon />, action: handleCartToggle },
-          { text: 'Regalería', to: '/regaleria', icon: <CardGiftcardIcon /> },
-          user
-            ? { text: 'Cerrar sesión', to: '#', icon: <LogoutIcon />, action: handleLogout }
-            : { text: 'Login', to: '/login', icon: <LoginIcon /> },
-          !user && { text: 'Register', to: '/register', icon: <PersonAddIcon /> },
-        ].filter(item => item).map((item) => (
-          <ListItem
-            key={item.text}
-            component={item.to !== '#' ? Link : 'div'} // Asegurarnos de usar "div" cuando sea un botón de acción
-            to={item.to}
-            onClick={item.action ? item.action : handleDrawerToggle}
-          >
-            <IconButton>
-              {item.icon} {/* El icono se coloca aquí */}
-            </IconButton>
-            <ListItemText primary={item.text} />
-          </ListItem>
-        ))}
-      </List>
+    <Box sx={{ textAlign: 'center', height: '100%' }}>
+      {/* Sección superior */}
+      <Box onClick={handleDrawerToggle} sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" sx={{ my: 2 }}>Lux-acc</Typography>
+        <List>
+          {[
+            user && {
+              text: `Hola, ${user.displayName || 'Usuario'}`,
+              to: '/profile',
+              icon: user.photoURL ? (
+                <Avatar alt={user.displayName} src={user.photoURL} sx={{ width: 24, height: 24 }} />
+              ) : (
+                <AccountCircleIcon />
+              )
+            },
+            { text: 'Productos', to: '/productos', icon: <StorefrontIcon /> },
+            { text: 'Carrito', to: '#', icon: <ShoppingCartIcon />, action: handleCartToggle },
+            { text: 'Regalería', to: '/regaleria', icon: <CardGiftcardIcon /> },
+          ].filter(item => item).map((item) => (
+            <ListItem
+              key={item.text}
+              component={item.to !== '#' ? Link : 'div'}
+              to={item.to}
+              onClick={item.action ? item.action : handleDrawerToggle}
+            >
+              <IconButton>
+                {item.icon}
+              </IconButton>
+              <ListItemText primary={item.text} />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+
+      <Divider />
+
+      {/* Sección inferior */}
+      <Box sx={{ backgroundColor: 'rgba(240,240,240,0.9)', position: 'absolute', bottom: 0, width: '100%' }}>
+        <List>
+          {[
+            user
+              ? { text: 'Cerrar sesión', to: '#', icon: <LogoutIcon />, action: handleLogout }
+              : { text: 'Login', to: '/login', icon: <LoginIcon /> },
+            !user && { text: 'Registrarse', to: '/register', icon: <PersonAddIcon /> },
+          ].filter(item => item).map((item) => (
+            <ListItem
+              key={item.text}
+              component={item.to !== '#' ? Link : 'div'}
+              to={item.to}
+              onClick={item.action ? item.action : handleDrawerToggle}
+            >
+              <IconButton>
+                {item.icon}
+              </IconButton>
+              <ListItemText primary={item.text} />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
     </Box>
   );
-;
-
 
   return (
     <CartProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
+          <ScrollToTop />
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <AppBar
               position="sticky"
@@ -182,7 +208,6 @@ export default function App() {
 
                     {user ? (
                       <>
-                        {/* Mostrar nombre del usuario y su imagen de perfil */}
                         <Typography variant="body1" sx={{ mr: 2 }}>Hola, {user.displayName || 'Usuario'}</Typography>
                         <Link to="/profile" style={{ textDecoration: 'none' }}>
                           {user.photoURL ? (

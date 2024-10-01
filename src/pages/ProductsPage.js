@@ -187,9 +187,9 @@ export default function ProductsPage() {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
+            bgcolor: '#f5f5f5eb',
             boxShadow: 24,
-            p: 4,
+            p: 2,
             width: 300,
             textAlign: 'center',
             borderRadius: 2,
@@ -199,7 +199,7 @@ export default function ProductsPage() {
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.1 }}
             >
               <Typography variant="h6" gutterBottom>
                 {modalProduct.name} agregado al carrito

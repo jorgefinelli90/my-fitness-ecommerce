@@ -37,34 +37,45 @@ const ProductDetail = () => {
 
         setTimeout(() => {
             setModalOpen(false);
-        }, 1500);
+        }, 700);
     };
 
     return (
         <Box sx={{ py: 4 }}>
             <Grid container spacing={4}>
                 {/* Imágenes del producto */}
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={5}>
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.9 }}
                     >
                         <Box
-                            component="img"
-                            src={product.image}
-                            alt={product.name}
                             sx={{
                                 width: '100%',
                                 height: 'auto',
+                                maxHeight: 700, // Establece una altura máxima para el contenedor
+                                overflow: 'hidden', // Evita que la imagen se salga del contenedor
                                 borderRadius: 2,
                                 boxShadow: 3,
-                                transition: 'transform 0.3s ease-in-out',
-                                '&:hover': {
-                                    transform: 'scale(1.05)',
-                                },
+                                position: 'relative', // Importante para el efecto de zoom
                             }}
-                        />
+                        >
+                            <Box
+                                component="img"
+                                src={product.image}
+                                alt={product.name}
+                                sx={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover', // Asegura que la imagen se ajuste bien al contenedor
+                                    transition: 'transform 0.5s ease-in-out',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)', // Zoom en la imagen
+                                    },
+                                }}
+                            />
+                        </Box>
                         {/* Espacio para imágenes adicionales en el futuro */}
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                             {[1, 2, 3].map((_, index) => (
@@ -199,9 +210,9 @@ const ProductDetail = () => {
                     }}
                 >
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
+                        initial={{ opacity: 0, y: 0 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.1 }}
                     >
                         <Typography variant="h6" gutterBottom>
                             {product.name} agregado al carrito

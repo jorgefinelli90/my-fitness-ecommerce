@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Checkbox, FormControlLabel, Snackbar } from '@mui/material';
+import { TextField, Button, Box, Typography, Checkbox, FormControlLabel, Snackbar, CircularProgress } from '@mui/material';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
@@ -13,6 +13,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Estado para manejar la carga
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Estado para el Snackbar
   const navigate = useNavigate(); // Hook para la redirección
 
@@ -23,6 +24,8 @@ const Register = () => {
     }
 
     try {
+      setLoading(true); // Activamos el estado de carga
+
       // Crear el usuario con email y contraseña
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -52,6 +55,8 @@ const Register = () => {
 
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false); // Finalizamos el estado de carga
     }
   };
 
@@ -116,8 +121,15 @@ const Register = () => {
 
       {error && <Typography color="error">{error}</Typography>}
 
-      <Button variant="contained" color="primary" onClick={handleRegister} sx={{ mt: 2 }}>
-        Registrarse
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleRegister}
+        disabled={loading} // Deshabilitar el botón mientras se registra el usuario
+        sx={{ mt: 2 }}
+        startIcon={loading && <CircularProgress size={20} />} // Mostrar el spinner durante la carga
+      >
+        {loading ? '' : 'Registrarse'} {/* Si está en carga, no mostrar texto */}
       </Button>
 
       {/* Snackbar para la notificación */}

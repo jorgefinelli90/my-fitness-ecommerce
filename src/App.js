@@ -22,8 +22,13 @@ import SlideInCart from './components/SlideInCart';
 import Footer from './components/Footer';
 import ProductDetail from './pages/ProductDetail';
 import { signOut, onAuthStateChanged } from 'firebase/auth'; // Firebase imports
-import { auth } from './firebase'; // Asegúrate de tener tu configuración Firebase
+import { auth } from './firebase'; 
 import ScrollToTop from './components/ScrollToTop'; // Importamos ScrollToTop
+import Checkout from './pages/Checkout'; 
+import Confirmation from './pages/Confirmation'; 
+import Orders from './components/Orders'
+
+
 
 const theme = createTheme({
   palette: {
@@ -264,6 +269,9 @@ export default function App() {
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/confirmation" element={<Confirmation />} /> 
+                  <Route path="/orders" element={<Orders />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
                 </Routes>
